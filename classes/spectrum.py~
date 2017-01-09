@@ -1,0 +1,90 @@
+import numpy as np
+import utils
+
+
+class Spectrum:
+    def __init__(self, fname=''):
+        self.fname = fname
+        self.freq = np.array([])
+        self.power = np.array([])
+        self.rbw = 0
+        self.vbw = 0
+        self.reflevel = 0
+        self.attenuation = 0
+        self.span = 0
+        self.centerfrequency = 0
+        self.sweeptime = 0
+        self.detectortype = ''
+
+    def load(self, type=None):
+        if type == None:
+            [freq,power] = utils.readRSspec(self.fname)
+        if type == 'vna':
+            [freq,power] = utils.readVNAspec(self.fname)
+        if type == 's11':
+            [freq,power] = utils.readVNAs11(self.fname)
+        if type == 'sa':
+            [freq,power] = utils.readSAspec(self.fname)
+
+        self.freq = freq
+        self.power = power 
+
+    def loadinfo(self):
+        f = open(self.fname,'r')
+        lines = f.readlines()
+        for l in lines:
+            if 'Center Frequency' in l:
+                a = l.split('\t')
+                a[1]= a[1].replace(',','.')
+                self.centerfrequency = float(a[1])
+            if 'Span' in l:
+                a = l.split('\t')
+                a[1] = a[1].replace(',','.')
+                self.span = float(a[1])
+            if 'Resolution Bandwidth' in l:
+                a = l.split('\t')
+                a[1] = a[1].replace(',','.')
+                self.rbw = float(a[1])
+            if 'Video Bandwidth' in l:
+                a = l.split('\t')
+                a[1] = a[1].replace(',','.')
+                self.vbw = float(a[1])
+            if 'Sweeptime' in l:
+                a = l.split('\t')
+                a[1] = a[1].replace(',','.')
+                self.sweeptime = float(a[1])
+            if 'Reference Level' in l:
+                a = l.split('\t')
+                a[1] = a[1].replace(',','.')
+                self.reflevel = float(a[1])
+            if 'Trace Detector' in l:
+                a = l.split('\t')
+                self.detectortype = a[1]
+            if 'RF Attenuator Setting' in l:
+                a = l.split('\t')
+                a[1] = a[1].replace(',','.')
+                self.attenuation = float(a[1])
+
+
+    def printinfo(self):
+        print' ********** infos ************'
+        print 'file name: ', self.fname 
+        print 'center frequency: ', self.centerfrequency ,' [Hz]'
+        print 'span: ', self.span ,' [Hz]'
+        print 'resolution bandwidth: ', self.rbw ,' [Hz]'
+        print 'video bandwidth: ', self.vbw ,' [Hz]'
+        print 'reference level: ', self.reflevel ,' dBm'
+        print 'attenuation: ', self.attenuation ,' dB'
+        print 'sweep time: ', self.sweeptime , ' s'
+        print 'detector type: ', self.detectortype
+        print '******************************'
+
+        
+    def getinfo(self):
+        return 'f_c = ' + str(self.centerfrequency/1e6) + ' MHz' + '\n' + 'span = '+ str(self.span/1e6) + ' MHz' + '\n' + 'rbw = '+ str(self.rbw/1e6) + ' MHz' + '\n' + 'atten = '+ str(self.attenuation) + ' dB' + '\n' + 'sweep time = '+ str(self.sweeptime) + ' s'
+#         return "f_c = " + str(self.centerfrequency) + '\n'
+#                 + 'span = '+ str(self.span) + '\n'
+#                 + 'rbw = '+ str(self.rbw) + '\n'
+#                 + 'atten = '+ str(self.attenuation) + '\n'
+#                + 'sweep time = '+ str(self.sweeptime)
+                

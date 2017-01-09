@@ -1,0 +1,67 @@
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rc('xtick', labelsize=15)
+matplotlib.rc('ytick', labelsize=15)
+import numpy as np
+import os
+import sys
+import glob
+cwd = os.getcwd()
+classpath = cwd + '/../classes/'
+utilspath = cwd + '/../utils/'
+sys.path.append(utilspath)
+sys.path.append(classpath)
+import utils
+import spectrum
+
+#name = sys.argv[1]
+fig = plt.figure(figsize=(8,6))
+ax = plt.subplot(111)
+folder2='/Users/romain/work/Auger/EASIER/data/20160902/'
+folder1='/Users/romain/work/Auger/EASIER/data/20160901/'
+#folder='/Users/romain/Dropbox/Public/EASIER/malargue2016/lab/spectrum/'
+#files = ['ampi.csv','ampi_#1.csv','ampi_#2.csv']
+#files = ['ampi.csv','ampi_#1.csv','ampi_#2.csv','amp022966.csv','022969.csv','022967.csv','023231.csv','022968.csv']
+#leg = ['022970','023232','023230','022966','022969','022967','023231','022968']
+#leg = ['022970','023232','023230','022966']
+#files = ['na_wf_open.csv','na_wof_open.csv']
+#leg = ['with filter', 'without filter']
+
+#files = ['na_i.csv','na_wf.csv','na_wof.csv']
+#leg = ['ref:i sma','with filter', 'without filter']
+
+#files = ['na_wf_open_#1.csv','na_wof_open_#1.csv']
+#leg = ['with filter', 'without filter']
+#files = ['na_i.csv','na_wf_#1.csv','na_wof_#1.csv']
+#leg = ['ref:i sma','with filter', 'without filter']
+
+#files = ['s11_#2.csv','s11_#1.csv','s11.csv','amp022966_#1.csv','022969_1.csv','022967_#1.csv','023231_1.csv','022968_1.csv']
+#leg = ['022970','023232','023230','022966','022969','022967','023231','022968']
+
+#files = [folder1+'/na_wof.csv', folder2 + '/na_wof_open.csv']
+#files = [folder1+'/na_wof_#1.csv', folder2 + '/na_wof_open_#1.csv']
+
+#files = [folder2+'/na_wf_open.csv', folder2 + '/na_wf_fixed.csv']
+files = [folder2+'/na_wf_open_#1.csv', folder2 + '/na_wf_fixed_#1.csv']
+#files = [folder1+'/na_wf_#1.csv', folder2 + '/na_wf_fixed_#1.csv']
+#files = [folder1+'/na_wf_#1.csv', folder2 + '/na_wf_open_#1.csv']
+
+#leg = ['shielded','open box']
+leg = ['open box','well grounded']
+flim = 1.8
+for f,legend in zip(files,leg):
+    name = f
+#    name = folder  + f
+    s = spectrum.Spectrum(name)
+    s.load('s11')
+#    s.load('vna')
+    ax.plot(s.freq[s.freq < flim],s.power[s.freq < flim],label=legend)
+    
+plt.xlabel('frequency [GHz]')
+#plt.ylabel('gain - 50 [dB]')
+plt.ylabel('vswr')
+plt.ylim(0.9,30)
+#plt.ylim(-50,20)
+plt.xlim(0.6,1.8)
+plt.legend(loc=2)
+plt.show()
